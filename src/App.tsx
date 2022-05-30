@@ -1,11 +1,30 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Routes, Route, Link } from "react-router-dom";
 import './App.css';
 
 function App() {
+
+  const [returnedData, setReturnedData] = useState('hello');
+
+  const fetchData = async() => {
+    const newData = await fetch('/quit', {
+      method: 'GET',
+      headers: {
+        'content-type': 'application/json',
+        'Accept': 'application/json'
+      }
+    })
+    .then(res => res.json());
+    console.log(newData);
+    setReturnedData(newData.result)
+  }
+
   return (
     <div className="App">
       <h1>HexBeGone</h1>
+      <button onClick={() => fetchData()}>Click Me</button>
+      <br />
+      {returnedData}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="about" element={<About />} />
