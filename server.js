@@ -1,30 +1,32 @@
-const User = require('./database/user/User');
-
 const   express = require('express'),
         dbOperations = require('./database/operations')
         cors = require('cors');
 
-// const API_PORT = process.env.PORT || 6000;
-// const app = express();
+const API_PORT = process.env.PORT || 4000;
+const app = express();
 
-// app.use(cors());
+let client;
+let session;
+app.use(express.json());
+app.use(express.urlencoded());
+app.use(cors());
 
-// app.get('/api', function(req, res) {
-//     console.log('Called');
-//     res.send({result: 'Helllo'})
-// })
+app.post('/api', async(req, res) => {
+    console.log('Called');
+    const result = await dbOperations.getUser(req.body.name)
+    res.send(result.recordset)
+})
 
-// app.get('/quit', function(req, res) {
-//     console.log('Called quit');
-//     res.send({result: 'Goodbye'})
-// })
+app.post('/create', async(req, res) => {
+    console.log("create called");
+    await dbOperations.createUser(req.body);
+    console.log("REQQ:", req.body)
+    const result = await dbOperations.getUser(req.body.firstName)
+    res.send(result.recordset)
+})
 
-const rick = new User(2, 'rick', 'sanchez', 'test');
+// const rick = new User(2, 'rick', 'sanchez', 'test');
 
 // dbOperations.createUser(rick)
 
-dbOperations.getUsers().then(res => {
-    console.log(res);
-})
-
-// app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
+app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
