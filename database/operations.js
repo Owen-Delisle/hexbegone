@@ -2,11 +2,13 @@ const   config      = require('./config.js'),
         sql         = require('mssql');
 
 
+const userDB = 'Users'
+
 const getUser = async(firstName) => {
     console.log("FIRST NAME:", firstName)
     try {
         let pool = await sql.connect(config);
-        let users = await pool.request().query(`SELECT * from Users WHERE FirstName = '${firstName}'`);
+        let users = await pool.request().query(`SELECT * from ${userDB} WHERE FirstName = '${firstName}'`);
         console.log(users);
         return users;
     } catch(err) {
@@ -17,7 +19,7 @@ const getUser = async(firstName) => {
 const getUsers = async() => {
     try {
         let pool = await sql.connect(config);
-        let users = await pool.request().query("SELECT * from Users");
+        let users = await pool.request().query(`SELECT * from ${userDB}`);
         console.log(users);
         return users;
     } catch(err) {
@@ -28,8 +30,8 @@ const getUsers = async() => {
 const createUser = async(newUser) => {
     try {
         let pool = await sql.connect(config);
-        let users = await pool.request().query(`INSERT INTO Users VALUES
-        (${newUser.userID}, '${newUser.firstName}', '${newUser.lastName}', '${newUser.email}')`);
+        let users = await pool.request().query(`INSERT INTO ${userDB} VALUES
+        ('${newUser.userID}', '${newUser.firstName}', '${newUser.lastName}', '${newUser.email}')`);
         console.log(users);
         return users;
     } catch(err) {
