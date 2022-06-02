@@ -6,12 +6,11 @@ import { createUser } from '../db_requests/signup_requests/createUser';
 
 export default class SignUp extends React.Component {
     state = {
-        returnedData: new User()
     }
     render() {
         let newUser = new User()
 
-        const setInput = (e: any) => {
+        const setInput = (e: React.ChangeEvent<HTMLInputElement>) => {
             newUser.userID = uuidv4()
             const { name, value } = e.target
             switch (name) {
@@ -28,21 +27,14 @@ export default class SignUp extends React.Component {
 
         return (
             <>
-                <h1>HexBeGone</h1>
-                <button onClick={
-                    () => createUser(newUser)
-                }>Create</button>
-                <button onClick={
-                    () => getUserByFirstName(newUser.firstName)
-                }>Get by First Name</button>
-                <br />
+                <h1>SignUp</h1>
                 <input name="firstName" placeholder="firstName" onChange={setInput}></input>
                 <input name="lastName" placeholder="lastName" onChange={setInput}></input>
                 <input name="email" placeholder="email" onChange={setInput}></input>
-                <p>UserID: {this.state.returnedData.userID}</p>
-                <p>First Name: {this.state.returnedData.firstName}</p>
-                <p>Last Name: {this.state.returnedData.lastName}</p>
-                <p>Email: {this.state.returnedData.email}</p>
+                <br />
+                <button onClick={
+                    () => createUser(newUser)
+                }>Register</button>
             </>
         );
     }
