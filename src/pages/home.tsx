@@ -10,6 +10,7 @@ export default function Home() {
             <nav>
                 <Link to="/about">About</Link>
                 <Link to="/signup">Signup</Link>
+                <Link to="/login">Login</Link>
             </nav>
         </>
     );

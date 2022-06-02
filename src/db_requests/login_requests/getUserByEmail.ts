@@ -1,13 +1,14 @@
-export const getUserByFirstName = async (firstName: string) => {
-    const newData = await fetch('/api', {
+export const getUserByEmail = async (email: string, password: string) => {
+    const data = await fetch('/login', {
         method: 'POST',
         headers: {
             'content-type': 'application/json',
             'Accept': 'application/json'
         },
         body: JSON.stringify({
-            name: firstName
+            email: email,
+            password: password
         })
     }).then(res => res.json());
-    return newData
+    return data
 }
