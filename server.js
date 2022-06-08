@@ -1,10 +1,13 @@
-const express = require('express'),
-    dbOperations = require('./database/operations')
-cors = require('cors');
-
-const API_PORT = process.env.PORT || 4000;
+const express = require('express');
 const app = express();
 const argon2 = require('argon2');
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
+require('dotenv').config()
+
+const dbOperations = require('./database/operations');
+
+const API_PORT = process.env.PORT || 4000;
 
 let client;
 let session;
@@ -13,12 +16,36 @@ app.use(express.urlencoded());
 app.use(cors());
 
 app.post('/login', async (req, res) => {
-    console.log('Called');
-    const result = await dbOperations.getUser(req.body.email, req.body.password)
-    console.log("DOOKIE", result.recordset[0].Password)
-    const match = await argon2.verify(result.recordset[0].Password, req.body.password)
-    console.log(match);
-    // res.send(result.recordset)
+    const email = req.body.email
+    const password = req.body.password
+
+    const result = await dbOperations.getUser(email, password)
+    const match = await argon2.verify(result.recordset[0].Password, password)
+
+    if(match) {
+        const accessToken = jwt.sign({email: email}, process.env.ACCESS_TOKEN_SECRET)
+        res.send({accessToken: accessToken})
+    } else {
+        res.send({accessToken: ""})
+    }
+})
+
+function authenticateToken(req, res, next) {
+    const authHeader = req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if(token == null) return res.sendStatus(401)
+
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403)
+
+        req.user() = user
+        next()
+    })
+    
+}
+
+app.get('/peepToken', authenticateToken, (req, res) => {
+
 })
 
 app.post('/create', async (req, res) => {

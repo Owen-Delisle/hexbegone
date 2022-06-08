@@ -1,25 +1,43 @@
 import React from 'react';
-import { User, UserInputs } from "../types/user"
-import { v4 as uuidv4 } from 'uuid';
+import { UserInputs } from "../types/user"
 import { getUserByEmail } from "../db_requests/login_requests/getUserByEmail"
 
 export default class SignUp extends React.Component {
     state = {
     }
     render() {
-        let email: string
-        let password: string
+        let emailInput: string
+        let passwordInput: string
 
-        const setInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const setInput = (e: React.ChangeEvent<HTMLInputElement>): void => {
             const { name, value } = e.target
             switch (name) {
                 case UserInputs.email:
-                    email = value
+                    emailInput = value
                     break;
                 case UserInputs.password:
-                    password = value;
+                    passwordInput = value;
                     break;
             }
+        }
+
+        const loginUser = (emailInput: string, passwordInput: string): void => {
+            getUserByEmail(emailInput, passwordInput).then((data?) => {
+                const d = data
+                switch(data) {
+                    case null:
+                        console.log("Login failure")
+                        break
+                    default:
+                        console.log(data.accessToken)
+                }
+            }).catch((err) => {
+                console.log("err from login page", err)
+            })
+        }
+
+        const storeUserSessionToken = () => {
+
         }
 
         return (
@@ -29,7 +47,7 @@ export default class SignUp extends React.Component {
                 <input name="password" placeholder="password" onChange={setInput}></input>
                 <br />
                 <button onClick={
-                    () => getUserByEmail(email, password)
+                    () => loginUser(emailInput, passwordInput)
                 }>Register</button>
             </>
         );
