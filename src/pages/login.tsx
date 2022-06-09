@@ -1,6 +1,7 @@
 import React from 'react';
 import { UserInputs } from "../types/user"
-import { getUserByEmail } from "../db_requests/login_requests/getUserByEmail"
+import { loginRequest } from "../db_requests/login_requests/loginRequest"
+import { getSessionData } from '../db_requests/login_requests/getSessionData';
 
 export default class SignUp extends React.Component {
     state = {
@@ -22,22 +23,11 @@ export default class SignUp extends React.Component {
         }
 
         const loginUser = (emailInput: string, passwordInput: string): void => {
-            getUserByEmail(emailInput, passwordInput).then((data?) => {
-                const d = data
-                switch(data) {
-                    case null:
-                        console.log("Login failure")
-                        break
-                    default:
-                        console.log(data.accessToken)
-                }
+            loginRequest(emailInput, passwordInput).then((data) => {
+                console.log("DABADEBER", data)
             }).catch((err) => {
                 console.log("err from login page", err)
             })
-        }
-
-        const storeUserSessionToken = () => {
-
         }
 
         return (
@@ -49,6 +39,8 @@ export default class SignUp extends React.Component {
                 <button onClick={
                     () => loginUser(emailInput, passwordInput)
                 }>Register</button>
+                <br />
+                <button onClick={() => getSessionData()}></button>
             </>
         );
     }

@@ -3,10 +3,9 @@ const argon2 = require('argon2');
 const config = require('./config.js')
 const sql = require('mssql');
 
-
 const userDB = 'Users'
 
-const getUser = async (email, password) => {
+const getUser = async (email) => {
     try {
         let pool = await sql.connect(config);
         let user = await pool.request().query(`SELECT * from ${userDB} WHERE Email = '${email}'`);
