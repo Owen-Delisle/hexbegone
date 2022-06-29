@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser')
 const dbOperations = require('../database/operations');
 const jwt_util = require('./util/jwt_util');
 const cookie_util = require('./util/cookie_util');
+const {jjt} = require('./util/JWT.ts')
 
 const API_PORT = process.env.PORT || 4000;
 
@@ -34,7 +35,9 @@ app.post('/login', async (req, res) => {
 
     if (match) {
         const accessToken = jwt_util.generateToken(user, '5s')
-        cookie_util.storeTokenInCookie(res, accessToken)
+        const refreshToken = jwt_util.generateToken(user, '5m')
+        cookie_util.storeTokenInCookie(res, 'accessToken', accessToken)
+        cookie_util.storeTokenInCookie(res, 'refreshToken', refreshToken)
     } else {
         return res.status(401).send("Invalid Email or Password")
     }

@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.2.1",
     "@types/argon2-browser": "^1.18.1",
     "@types/jest": "^27.0.1",
+    "@types/jsonwebtoken": "^8.5.8",
     "@types/node": "^17.0.38",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
@@ -41,7 +42,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "server": "nodemon servers/server.js"
+    "server": "./node_modules/nodemon/bin/nodemon.js -e ts  servers/server.js"
   },
   "eslintConfig": {
     "extends": [
@@ -62,7 +63,8 @@
     ]
   },
   "devDependencies": {
-    "@types/uuid": "^8.3.4"
+    "@types/uuid": "^8.3.4",
+    "ts-node": "^10.8.1"
   },
   "browser": {
     "crypto": false

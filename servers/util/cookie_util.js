@@ -1,5 +1,5 @@
-function storeTokenInCookie(res, token) {
-    res.cookie('accessToken', token, {
+function storeTokenInCookie(res, name, token) {
+    res.cookie(name, token, {
         maxAge: 30000, // 5 sec
         httpOnly: true
     })
