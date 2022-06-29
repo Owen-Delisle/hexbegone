@@ -9,16 +9,6 @@ enum JWTFields {
     algo = "RS256"
 }
 
-enum JWTAgeString {
-    access = "15m",
-    refresh = "60d"
-}
-
-enum JWTAgeNumber {
-    access = 15 * 60 * 1000, // 15 min in ms
-    refresh = 60 * 24 * 60 * 60 * 1000 // 60 days in ms
-}
-
 interface IJWT {
     issuer: string;
     subject: string;
@@ -35,8 +25,8 @@ class JWT implements IJWT {
     issuer: string = JWTFields.iss;
     audience: string = JWTFields.aud;
     algorithm: string = JWTFields.algo;
-    privateKey: string = JWT.key("../keys/private.key");
-    publicKey: string = JWT.key("../keys/public.key");
+    privateKey: string = JWT.key("../../keys/private.key");
+    publicKey: string = JWT.key("../../keys/public.key");
     subject: string;
     expiresInString: string;
     expiresInNumber: number;
@@ -74,4 +64,4 @@ class JWT implements IJWT {
     }
 };
 
-export { JWT, JWTAgeString, JWTAgeNumber };
+export { JWT };

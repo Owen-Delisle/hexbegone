@@ -9,7 +9,8 @@ const cookieParser = require('cookie-parser')
 const dbOperations = require('../database/operations');
 
 import { Request, Response } from 'express';
-import { JWT, JWTAgeString, JWTAgeNumber } from './classes/JWT'
+import { AccessJWT } from "./classes/JWTClasses/AccessJWT"
+import { RefreshJWT } from "./classes/JWTClasses/RefreshJWT"
 
 const API_PORT = process.env.PORT || 6000;
 
@@ -34,8 +35,8 @@ app.post('/login', async (req: Request, res: Response) => {
     const match = await argon2.verify(user.Password, inputPassword)
 
     if (match) {        
-        const accessToken = new JWT(user.Email, JWTAgeString.access, JWTAgeNumber.access)
-        const refreshToken = new JWT(user.Email, JWTAgeString.refresh, JWTAgeNumber.refresh)
+        const accessToken = new AccessJWT(user.Email)
+        const refreshToken = new RefreshJWT(user.Email)
 
         accessToken.storeInCookie(res, "accessToken")
         refreshToken.storeInCookie(res, "refreshToken")
