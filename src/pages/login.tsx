@@ -38,7 +38,7 @@ export default class SignUp extends React.Component {
                 <br />
                 <button onClick={
                     () => loginUser(emailInput, passwordInput)
-                }>Register</button>
+                }>Login</button>
                 <br />
                 <button onClick={() => getSessionData()}></button>
             </>

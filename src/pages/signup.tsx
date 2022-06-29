@@ -1,5 +1,4 @@
 import React from 'react';
-// import * as argon2 from "argon2";
 import { User, UserInputs } from "../types/user"
 import { v4 as uuidv4 } from 'uuid';
 import { createUser } from '../db_requests/signup_requests/createUser';
@@ -27,18 +26,6 @@ export default class SignUp extends React.Component {
                     break;
             }
         }
-
-        // async function userForPost(newUser: User): Promise<User> {
-        //     newUser.userID = uuidv4()
-
-        //     try {
-        //         newUser.password = await argon2.hash("password");
-        //     } catch (err) {
-        //         console.log(err)
-        //     }
-
-        //     return newUser
-        // }
 
         return (
             <>
