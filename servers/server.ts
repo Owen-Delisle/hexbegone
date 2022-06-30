@@ -9,6 +9,7 @@ const cookieParser = require('cookie-parser')
 const dbOperations = require('../database/operations');
 
 import { Request, Response } from 'express';
+
 import { AccessJWT } from "./classes/JWTClasses/AccessJWT"
 import { RefreshJWT } from "./classes/JWTClasses/RefreshJWT"
 
@@ -31,15 +32,18 @@ app.post('/login', async (req: Request, res: Response) => {
 
     const result = await dbOperations.getUser(inputEmail)
     const user = result.recordset[0]
+    const { Email, Password } = user
+    const match = await argon2.verify(Password, inputPassword)
 
-    const match = await argon2.verify(user.Password, inputPassword)
-
-    if (match) {        
-        const accessToken = new AccessJWT(user.Email)
-        const refreshToken = new RefreshJWT(user.Email)
+    if (match) {
+        const accessToken = new AccessJWT(Email)
+        const refreshToken = new RefreshJWT(Email)
 
         accessToken.storeInCookie(res, "accessToken")
         refreshToken.storeInCookie(res, "refreshToken")
+
+        const tokenPayload = refreshToken.verifiedPayload()
+        dbOperations.storeRefreshToken(tokenPayload.jti, tokenPayload.exp)
     } else {
         return res.status(401).send("Invalid Email or Password")
     }

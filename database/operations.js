@@ -4,6 +4,7 @@ const config = require('./config.js')
 const sql = require('mssql');
 
 const userDB = 'Users'
+const refreshTokenDB = 'RefreshTokens'
 
 const getUser = async (email) => {
     try {
@@ -42,8 +43,20 @@ const createUser = async (newUser) => {
     }
 }
 
+const storeRefreshToken = async (jti, expiry) => {
+    try {
+        let pool = await sql.connect(config);
+        let jwts = await pool.request().query(`INSERT INTO ${refreshTokenDB} VALUES
+        ('${jti}', '${expiry}')`);
+        return jwts;
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 module.exports = {
     getUsers,
     createUser,
-    getUser
+    getUser,
+    storeRefreshToken
 }
