@@ -52,6 +52,11 @@ class JWT implements IJWT {
         }
         this.signedToken = this.generateSignedToken()
     }
+    
+    public static decodeEncodedToken(encodedToken: String): JWT_Verification {
+        const decoded = jwt.decode(encodedToken, {complete: true})
+        return decoded.payload
+    }
 
     private static key(filePath: string): string {
         return fs.readFileSync(path.resolve(__dirname, filePath), "utf8");
@@ -69,7 +74,7 @@ class JWT implements IJWT {
         return jwt.sign(this.payload, this.privateKey, signOptions)
     }
 
-    public storeInCookie(res: Response, name: string): void {
+    public storeInCookie(res: Response, name: string): void {        
         res.cookie(name, this.signedToken, {
             maxAge: this.expiresInNumber,
             httpOnly: true
@@ -86,12 +91,6 @@ class JWT implements IJWT {
         }
 
         return jwt.verify(this.signedToken, this.publicKey, verifyOptions)
-    }
-
-    public decode(): void {
-        const decoded = jwt.decode(this.signedToken, {complete: true})
-        console.log("Decoded Header:", JSON.stringify(decoded.header));
-        console.log("Decoded Payload:", JSON.stringify(decoded.payload));
     }
 };
 

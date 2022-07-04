@@ -1,11 +1,12 @@
 import { JWT } from "./JWT";
 
 class AccessJWT extends JWT {
-    constructor(subject: string) {
-        const ageString: string = "15m";
-        const ageNumber: number = (15 * 60 * 1000) // 15 mins in ms
+    static title = "accessToken"
+    static ageString: string = "15m";
+    static ageNumber: number = (15 * 60 * 1000) // 15 mins in ms
 
-        super(subject, ageString, ageNumber);
+    constructor(subject: string) {
+        super(subject, AccessJWT.ageString, AccessJWT.ageNumber);
     }
 }
 

@@ -54,9 +54,20 @@ const storeRefreshToken = async (jti, expiry) => {
     }
 }
 
+const getRefreshTokenByJTI = async (jti) => {
+    try {
+        let pool = await sql.connect(config);
+        let jwt = await pool.request().query(`SELECT * from ${refreshTokenDB} WHERE JTI = '${jti}'`);
+        return jwt;
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 module.exports = {
     getUsers,
     createUser,
     getUser,
-    storeRefreshToken
+    storeRefreshToken,
+    getRefreshTokenByJTI
 }

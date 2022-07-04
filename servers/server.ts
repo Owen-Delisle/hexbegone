@@ -11,6 +11,7 @@ const dbOperations = require('../database/operations');
 import { Request, Response } from 'express';
 
 import { AccessJWT } from "./classes/JWTClasses/AccessJWT"
+import { JWT } from './classes/JWTClasses/JWT';
 import { RefreshJWT } from "./classes/JWTClasses/RefreshJWT"
 
 const API_PORT = process.env.PORT || 6000;
@@ -39,8 +40,8 @@ app.post('/login', async (req: Request, res: Response) => {
         const accessToken = new AccessJWT(Email)
         const refreshToken = new RefreshJWT(Email)
 
-        accessToken.storeInCookie(res, "accessToken")
-        refreshToken.storeInCookie(res, "refreshToken")
+        accessToken.storeInCookie(res, AccessJWT.title)
+        refreshToken.storeInCookie(res, RefreshJWT.title)
 
         const tokenPayload = refreshToken.verifiedPayload()
         dbOperations.storeRefreshToken(tokenPayload.jti, tokenPayload.exp)
@@ -49,6 +50,35 @@ app.post('/login', async (req: Request, res: Response) => {
     }
 
     res.send({ message: "Login Success" })
+})
+
+app.post('/refresh_token_from_db', async (req: Request, res: Response) => {
+    const accessToken = req.cookies[AccessJWT.title]
+    const refreshToken = req.cookies[RefreshJWT.title]
+
+    if (accessToken != null) {
+        res.send({ token: true })
+        return
+    }
+
+    if (refreshToken != null) {
+        const refreshFromCookie = JWT.decodeEncodedToken(refreshToken)
+        const refreshFromDB = await dbOperations.getRefreshTokenByJTI(refreshFromCookie.jti)
+
+        if (refreshFromDB !== null) {
+            const expireTimeOfToken = refreshFromDB.recordset[0]['Expires']
+            const secondsSinceEpoch = Math.round(new Date().getTime() / 1000)
+            if (secondsSinceEpoch < expireTimeOfToken) {
+                const newAccessToken = new AccessJWT(refreshFromCookie.sub)
+                newAccessToken.storeInCookie(res, AccessJWT.title)
+                res.send({ token: true })
+                return
+            }
+        }
+    } else {
+        res.send({ token: false })
+        return 
+    }
 })
 
 app.listen(API_PORT, () => console.log(`Listening on port ${API_PORT}`));
