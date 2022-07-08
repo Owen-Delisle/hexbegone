@@ -9,7 +9,6 @@ export const storedTokenRequest = async () => {
             'Accept': 'application/json'
         },
     }).then(res => res.json());
-    console.log("DIZADA", data);
-    
+        
     return data
 }

@@ -57,7 +57,7 @@ app.post('/refresh_token_from_db', async (req: Request, res: Response) => {
     const refreshToken = req.cookies[RefreshJWT.title]
 
     if (accessToken != null) {
-        res.send({ token: true })
+        res.send(true)
         return
     }
 
@@ -65,18 +65,18 @@ app.post('/refresh_token_from_db', async (req: Request, res: Response) => {
         const refreshFromCookie = JWT.decodeEncodedToken(refreshToken)
         const refreshFromDB = await dbOperations.getRefreshTokenByJTI(refreshFromCookie.jti)
 
-        if (refreshFromDB !== null) {
+        if (refreshFromDB != null) {
             const expireTimeOfToken = refreshFromDB.recordset[0]['Expires']
             const secondsSinceEpoch = Math.round(new Date().getTime() / 1000)
             if (secondsSinceEpoch < expireTimeOfToken) {
                 const newAccessToken = new AccessJWT(refreshFromCookie.sub)
                 newAccessToken.storeInCookie(res, AccessJWT.title)
-                res.send({ token: true })
+                res.send(true)
                 return
             }
         }
     } else {
-        res.send({ token: false })
+        res.send(false)
         return 
     }
 })
