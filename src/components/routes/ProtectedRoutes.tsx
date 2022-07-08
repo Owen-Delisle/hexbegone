@@ -1,34 +1,29 @@
 import { Navigate, Outlet } from 'react-router-dom'
-import { storedTokenRequest } from '../../db_requests/token_requests/storedTokenRequest'
-import { useAsync } from "react-async"
-import React, { useState, useEffect } from 'react';
-
-function Child({ token }: { token: boolean }) {
-    // Problem:
-    // This will error if `items` is null/undefined
-    console.log("Child", token);
-    
-    return token ? <Outlet /> : <Navigate to="/login" />
-}
+import { useState, useEffect } from 'react';
+import { storedTokenRequest } from '../../db_requests/token_requests/storedTokenRequest';
 
 function ProtectedRoutes() {
-    // Uninitialized state will cause Child to error out
-    const [token, setToken] = useState<boolean>(false);
+    const [token, setToken] = useState<boolean | undefined>(); // <-- initially undefined
 
-    // Data does't start loading
-    // until *after* Parent is mounted
     useEffect(() => {
-        storedTokenRequest()
-            .then(data => {
-                console.log("Promise", data);
-                setToken(data)
-            });
+        const authenticateUser = async () => {
+            try {
+                const data = await storedTokenRequest()
+                setToken(data);
+            } catch (error) {
+                setToken(false);
+            }
+        };
+
+        authenticateUser();
     }, []);
 
-    // Solution:
-    // don't render Child until `items` is ready!
+    if (token === undefined) {
+        return null; // or loading indicator/spinner/etc...
+    }
+
     return (
-        <Child token={token} />
+        token ? <Outlet /> : <Navigate to="/login" />
     );
 }
 

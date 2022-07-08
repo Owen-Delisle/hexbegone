@@ -14,6 +14,8 @@ import { AccessJWT } from "./classes/JWTClasses/AccessJWT"
 import { JWT } from './classes/JWTClasses/JWT';
 import { RefreshJWT } from "./classes/JWTClasses/RefreshJWT"
 
+import Time from "../utils/Time"
+
 const API_PORT = process.env.PORT || 6000;
 
 app.use(express.json());
@@ -56,6 +58,11 @@ app.post('/refresh_token_from_db', async (req: Request, res: Response) => {
     const accessToken = req.cookies[AccessJWT.title]
     const refreshToken = req.cookies[RefreshJWT.title]
 
+    if(accessToken == null && refreshToken == null) {
+        res.send(false)
+        return
+    }
+
     if (accessToken != null) {
         res.send(true)
         return
@@ -67,7 +74,7 @@ app.post('/refresh_token_from_db', async (req: Request, res: Response) => {
 
         if (refreshFromDB != null) {
             const expireTimeOfToken = refreshFromDB.recordset[0]['Expires']
-            const secondsSinceEpoch = Math.round(new Date().getTime() / 1000)
+            const secondsSinceEpoch = Time.dateNowInMS()
             if (secondsSinceEpoch < expireTimeOfToken) {
                 const newAccessToken = new AccessJWT(refreshFromCookie.sub)
                 newAccessToken.storeInCookie(res, AccessJWT.title)
@@ -75,9 +82,6 @@ app.post('/refresh_token_from_db', async (req: Request, res: Response) => {
                 return
             }
         }
-    } else {
-        res.send(false)
-        return 
     }
 })
 
